@@ -126,3 +126,61 @@ $(document).ready(function () {
         getLocal(zipURL)
 
     }
+
+     // function that takes in parameter if the user doesn't want to share location
+     function noGps() {
+
+        // we are getting the value of the city from the user.
+        var city = $("#city").val();
+
+        // Making a url with user input
+        var latLonURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${weatherKey}`;
+
+        // getting together all map, markers, and trail data to append to dom.
+        getLocal(latLonURL);
+    }
+
+
+    // this function will get lat and long to put together a hiking URL
+    function getLocal(URL) {
+        
+        // first ajax to get the city's lat and lon
+        $("#parameters").on("click", function (e) {
+
+            e.preventDefault();
+            if (!$(".lengthTime").is(":checked") || $("#radius").val() === "") {
+                $("#hikingParameters").addClass("hidden");
+                $("#error2").removeClass("hidden");
+                setTimeout(function () {
+                    $("#hikingParameters").removeClass("hidden");
+                    $("#error2").addClass("hidden");
+                }, 1000);
+            } else {
+
+                // setting values to variables to get lat and lon
+                timeHike = $(".lengthTime").val();
+                userDistance = $("#radius").val();
+
+                // hiding previous div and show the next
+                $("#hikingParameters").addClass("hidden");
+                $("#userTrails").removeClass("hidden");
+
+                // ajax request to get api data
+                $.ajax({
+                    url: URL,
+                    method: "GET"
+                }).then(function (res) {
+
+                    // setting the all variables to get hiking trails
+                    var lon = JSON.stringify(res.coord.lon);
+                    var lat = JSON.stringify(res.coord.lat);
+
+                    // url to get hiking api
+                    var hikeURL = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=${userDistance}&key=200992005-36cef2b40b13fda0780742aba62d29e7`;
+
+                    createMapTrails(hikeURL, lat, lon);
+
+                })
+            }
+        })
+    }
