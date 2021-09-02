@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Trails</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+  <script src="https://use.fontawesome.com/d77d433b84.js"></script>
+  <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+
+</head>
+
+<!-- Bulma framework used for styling -->
+
+<body class="column is-full is-fullheight bodyBackground">
+
+  <!-- Header section -->
+  <header class="columns is-full is-centered">
+    <section style="background-image: url('./assets/images/hiking-walking-trails.jpg');"
+      class="container headImage mb-6">
+
+      <Section class="column">
+        <button id="myFavorites" class="button is-rounded favBtn mt-2 mr-2 has-background-danger-dark"><i
+            class="fa fa-heart-o" aria-hidden="true"></i>&nbsp Favorites</button>
+      </Section>
+
+      <section class="column is-full is-centered">
+        <span class="appTitle has-text-white">Happy Trails</span>
+      </section>
+
+    </section>
+  </header>
+
+  <!-- Main body section -->
+  <main class="column is-fullheight is-centered">
+    <!-- This section displays the weather forecast -->
+    <p class="location"></p>
+
+    <div id="clouds"></div>
+
+    <div id="weather-content">
+      <div id="weather-bg">
+        <div id="geo-pos"></div>
+        <div id="weather-icon"></div>
+        <div id="weather-value"></div>
+      </div>
+    </div>
+
+    <!-- This section displays an input for user city or requests to use user location -->
+    <section id="userCity">
+      <section class="column has-text-centered">
+        <section class="columns has-text-centered m-5 is-half is-centered">
+          <form>
+            <section>
+              <p class="column has-text-white">If you want to enable 'Share Location' please click here.</p>
+            </section>
+            <button id="gps" type="submit" class="button is-link">Share Location</button>
+            <section>
+              <p class="column has-text-white">If you deny location, this button will be disabled.</p>
+            </section>
+          </form>
+        </section>
+
+        <section class="columns has-text-centered m-5 is-one-quarter">
+          <!-- <section class="column"> -->
+          <form class="column mb-3">
+            <input type="text" id="zip" placeholder="Please enter a zip code." class="input is-focused mb-2">
+            <button type="submit" id="zipCode" class="button is-link is-inverted">Submit Zip Code</button>
+          </form>
+          <!-- </section> -->
+
+          <!-- <section class="column"> -->
+          <form id="location-request" class="column">
+            <input type="text" id="city" placeholder="Please enter a city." class="input is-focused mb-2">
+            <button type="submit" id="no-gps" class="button is-link is-inverted">Submit City</button>
+          </form>
+          <!-- </section> -->
+        </section>
+      </section>
+    </section>
+
+    <section id="error" class="hidden has-background-danger has-text-white">
+      <p>An error has occured please enter some data</p>
+    </section>
+    <section id="error2" class="hidden has-background-danger has-text-white">
+      <p>An error has occured please make sure all fields are filled out.</p>
+    </section>
+
+    <!-- This section ask user for hiking parameters -->
+    <section id="hikingParameters" class="column is-full hidden is-centered">
+      <Section class="column is-full has-text-centered">
+        <p>How many miles are you willing to travel to get to your hiking trail?</p>
+        <section class="column is-full">
+          <input type="text" id="radius" class="input is-focused"><br><br>
+        </section>
+        <form action="">
+          <p>How long would you like to hike?</p>
+          <input type="radio" id="shortest" name="time" value="60" class="lengthTime">
+          <label for="shortest">1/2hr-1 hour</label><br>
+          <input type="radio" id="medium" name="time" value="120" class="lengthTime">
+          <label for="medium">1-2 hours</label><br>
+          <input type="radio" id="longest" name="time" value="10000" class="lengthTime">
+          <label for="longest">3+ hours</label><br><br>
+
+          <button type="submit" id="parameters" class="button is-link is-inverted">Go Hiking!</button>
+        </form>
+      </Section>
+    </section>
+
+    <!-- This section displays the trails that were found based on user input -->
+    <section class="hidden column is-full has-text-centered" id="userTrails">
+      <p class="has-text-white mb-1 has-text-weight-semibold is-size-4">Trails found within your selected radius:</p>
+      <Section id="map" class="is-centered  mb-6"></Section>
+      <section id="trailsFound">
+
+
+
+        <section class="trail hidden mb-2" id="trail0">
+          <p id="trailName0" class="has-text-black is-size-4 has-text-weight-bold">
+            <button id="faveHike0"><i class="fa fa-heart has-text-danger-dark" aria-hidden="true"></i></button>
+          </p>
+          <a id="link0" class="has-text-link-dark is-size-5 has-text-weight-bold">Click Here for more Info</a><br>
+          <p id="length0" class="has-text-black is-size-6 has-text-weight-bold"></p>
+          <p id="difficulty0" class="has-text-black is-size-6 has-text-weight-bold"></p>
+        </section>
+
+        <section class="trail hidden mb-2" id="trail1">
+          <section class="column">
+            <p id="trailName1" class="has-text-black is-size-4 has-text-weight-bold">
+              <button id="faveHike1"><i class="fa fa-heart has-text-danger-dark" aria-hidden="true"></i></button>
+          </section>
+          </p>
+          <a id="link1" class="has-text-link-dark is-size-5 has-text-weight-bold">Click Here for more Info</a><br>
+          <p id="length1" class="has-text-black is-size-6 has-text-weight-bold"></p>
+          <p id="difficulty1" class="has-text-black is-size-6 has-text-weight-bold"></p>
+        </section>
+
+        <section class="trail hidden mb-2" id="trail2">
+          <p id="trailName2" class="has-text-black is-size-4 has-text-weight-bold">
+
+            <button id="faveHike2"></i><i class="fa fa-heart has-text-danger-dark" aria-hidden="true"></i></button>
+          </p>
+          <a id="link2" class="has-text-link-dark is-size-5 has-text-weight-bold">Click Here for more Info</a><br>
+          <p id="length2" class="has-text-black is-size-6 has-text-weight-bold"></p>
+          <p id="difficulty2" class="has-text-black is-size-6 has-text-weight-bold"></p>
+        </section>
+
+        <section class="trail hidden mb-2" id="trail3">
+          <p id="trailName3" class="has-text-black is-size-4 has-text-weight-bold">
+
+            <button id="faveHike3"><i class="fa fa-heart has-text-danger-dark" aria-hidden="true"></i></button>
+          </p>
+          <a id="link3" class="has-text-link-dark is-size-5 has-text-weight-bold">Click Here for more Info</a><br>
+          <p id="length3" class="has-text-black is-size-6 has-text-weight-bold"></p>
+          <p id="difficulty3" class="has-text-black is-size-6 has-text-weight-bold"></p>
+        </section>
+
+        <section class="trail hidden mb-2" id="trail4">
+          <p id="trailName4" class="has-text-black is-size-4 has-text-weight-bold">
+
+            <button id="faveHike4"><i class="fa fa-heart has-text-danger-dark" aria-hidden="true"></i></button>
+          </p>
+          <a id="link4" class="has-text-link-dark is-size-5 has-text-weight-bold">Click Here for more Info</a><br>
+          <p id="length4" class="has-text-black is-size-6 has-text-weight-bold"></p>
+          <p id="difficulty4" class="has-text-black is-size-6 has-text-weight-bold"></p>
+        </section>
+
+      </section>
+    </section>
+
+    <!-- The Modal -->
+    <section id="myFavsModal" class="favsModal">
+      <!-- Modal content -->
+      <section class="modal-content">
+        <section class="close">&times;</section>
+        <!-- Dynamic paragraph here... -->
+      </section>
+    </section>
+  </main>
+
+  <!-- Footer section -->
+  <footer class="hero-foot"></footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <script src="./assets/javascript/javascript.js"></script>
+  <script src="./assets/javascript/local_storage.js"></script>
+  <script src="./assets/javascript/weather.js"></script>
+
+</body>
+
+</html>
